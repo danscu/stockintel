@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="libs/guava-10.0.jar"/>
+	<classpathentry kind="lib" path="libs/netty-3.5.5.Final.jar"/>
+	<classpathentry kind="lib" path="libs/slf4j-api-1.7.7.jar"/>
+	<classpathentry kind="lib" path="libs/slf4j-simple-1.7.7.jar"/>
+	<classpathentry kind="lib" path="libs/lz4-1.2.0.jar"/>
+	<classpathentry kind="lib" path="libs/snappy-java-1.0.5.jar"/>
+	<classpathentry kind="lib" path="libs/metrics-core-3.0.1.jar"/>
+	<classpathentry kind="lib" path="/home/danke/work/hadoop/hadoop-2.4.0/share/hadoop/common/hadoop-common-2.4.0.jar"/>
+	<classpathentry kind="lib" path="/home/danke/work/hadoop/hadoop-2.4.0/share/hadoop/mapreduce/hadoop-mapreduce-client-core-2.4.0.jar"/>
+	<classpathentry kind="lib" path="/home/danke/work/hadoop/hadoop-2.4.0/share/hadoop/tools/lib/commons-cli-1.2.jar"/>
+	<classpathentry kind="lib" path="/usr/share/cassandra/apache-cassandra.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
