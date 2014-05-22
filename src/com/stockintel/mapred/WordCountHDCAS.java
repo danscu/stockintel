@@ -1,9 +1,12 @@
 package com.stockintel.mapred;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.Arrays;
+import java.util.SortedMap;
 import java.util.StringTokenizer;
 
+import org.apache.cassandra.db.Column;
 import org.apache.cassandra.hadoop.ColumnFamilyInputFormat;
 import org.apache.cassandra.hadoop.ConfigHelper;
 import org.apache.cassandra.thrift.SlicePredicate;
@@ -11,7 +14,6 @@ import org.apache.cassandra.utils.ByteBufferUtil;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
-import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper;
@@ -26,19 +28,37 @@ public class WordCountHDCAS {
     static final String COLUMN_FAMILY = "text_table";
     static final String COLUMN_NAME = "text_col";
 
-    public static class Map extends Mapper<LongWritable, Text, Text, IntWritable> {
+    static final String OUTPUT_PATH = "/output";
+
+    private static final String CONF_COLUMN_NAME = "columnname";
+    
+    public static class Map extends Mapper<ByteBuffer, SortedMap<ByteBuffer, Column>, Text, IntWritable> {
         private final static IntWritable one = new IntWritable(1);
         private Text word = new Text();
+        private ByteBuffer sourceColumn;
+        
+        protected void setup(org.apache.hadoop.mapreduce.Mapper.Context context)
+        throws IOException, InterruptedException
+        {
+            sourceColumn = 
+                    ConfigHelper.getInputSlicePredicate(context.getConfiguration()).getColumn_names().get(0);
+        }
 
-        public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
-            String line = value.toString();
-            StringTokenizer tokenizer = new StringTokenizer(line);
-            while (tokenizer.hasMoreTokens()) {
-                word.set(tokenizer.nextToken());
+        public void map(ByteBuffer key, SortedMap<ByteBuffer, Column> columns, Context context) throws IOException, InterruptedException
+        {
+            Column column = columns.get(sourceColumn);
+            if (column == null)
+                return;
+            String value = ByteBufferUtil.string(column.value());
+
+            StringTokenizer itr = new StringTokenizer(value);
+            while (itr.hasMoreTokens())
+            {
+                word.set(itr.nextToken());
                 context.write(word, one);
             }
         }
-    } 
+    }
 
     public static class Reduce extends Reducer<Text, IntWritable, Text, IntWritable> {
 
@@ -71,6 +91,12 @@ public class WordCountHDCAS {
         // input
         job.setInputFormatClass(ColumnFamilyInputFormat.class);
 
+        ConfigHelper.setInputRpcPort(conf, "9160");
+        ConfigHelper.setInputInitialAddress(conf, CASSANDRA_HOST);
+        ConfigHelper.setInputColumnFamily(conf, KEYSPACE, COLUMN_FAMILY);
+        ConfigHelper.setInputInitialAddress(job.getConfiguration(), CASSANDRA_HOST);
+        ConfigHelper.setInputColumnFamily(job.getConfiguration(), KEYSPACE, COLUMN_FAMILY);
+        ConfigHelper.setInputPartitioner(job.getConfiguration(), "org.apache.cassandra.dht.RandomPartitioner");
         ConfigHelper.setInputRpcPort(job.getConfiguration(), CASSANDRA_PORT);
         ConfigHelper.setInputInitialAddress(job.getConfiguration(), CASSANDRA_HOST);
         ConfigHelper.setInputColumnFamily(job.getConfiguration(), KEYSPACE, COLUMN_FAMILY);
