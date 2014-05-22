@@ -3,5 +3,7 @@ CREATE KEYSPACE text_ks WITH REPLICATION = { 'class' : 'SimpleStrategy', 'replic
 USE text_ks;
 
 CREATE TABLE text_table (
-	text_col text PRIMARY KEY
-);
+    id int,
+	text_col text,
+	primary key (id)
+) WITH COMPACT STORAGE;

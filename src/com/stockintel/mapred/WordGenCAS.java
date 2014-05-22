@@ -39,9 +39,10 @@ public class WordGenCAS {
             if (line.isEmpty())
             	continue;
             System.out.println("[" + line + "]");
-            String cqlStatement2 = String.format("insert into %s (%s) values ('%s');",
+            String cqlStatement2 = String.format("insert into %s (id, %s) values (%d, '%s');",
                     COLUMN_FAMILY,
                     COLUMN_NAME,
+                    lineCount,
                     line);
             ResultSet result = session.execute(cqlStatement2);
             lineCount++;
