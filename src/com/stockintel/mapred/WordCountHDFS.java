@@ -19,6 +19,7 @@ public class WordCountHDFS {
 
 		public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
 			String line = value.toString();
+			System.out.println("Map: " + line);
 			StringTokenizer tokenizer = new StringTokenizer(line);
 			while (tokenizer.hasMoreTokens()) {
 				word.set(tokenizer.nextToken());
@@ -31,6 +32,7 @@ public class WordCountHDFS {
 
 		public void reduce(Text key, Iterable<IntWritable> values, Context context) 
 				throws IOException, InterruptedException {
+			System.out.println("Reduce: " + key);
 			int sum = 0;
 			for (IntWritable val : values) {
 				sum += val.get();
@@ -56,6 +58,7 @@ public class WordCountHDFS {
 		FileInputFormat.addInputPath(job, new Path(args[0]));
 		FileOutputFormat.setOutputPath(job, new Path(args[1]));
 
+		job.setJarByClass(WordCountHDFS.class);
 		job.waitForCompletion(true);
 	}
 

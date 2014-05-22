@@ -21,6 +21,7 @@ import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 
 public class WordCountHDCAS {
     static final String CASSANDRA_HOST = "localhost";
+    static final String CASSANDRA_PORT = "9160";
     static final String KEYSPACE = "text_ks";
     static final String COLUMN_FAMILY = "text_table";
     static final String COLUMN_NAME = "text_col";
@@ -52,6 +53,11 @@ public class WordCountHDCAS {
     }
 
     public static void main(String[] args) throws Exception {
+    	if (args.length < 1) {
+    		System.err.println("Usage: WordCountHDCAS <output path>");
+    		System.exit(-1);
+    	}
+    	
         Configuration conf = new Configuration();
 
         Job job = new Job(conf, "wordcount");
@@ -64,18 +70,20 @@ public class WordCountHDCAS {
 
         // input
         job.setInputFormatClass(ColumnFamilyInputFormat.class);
-        
-        ConfigHelper.setInputRpcPort(conf, "9160");
-        ConfigHelper.setInputInitialAddress(conf, CASSANDRA_HOST);
-        ConfigHelper.setInputColumnFamily(conf, KEYSPACE, COLUMN_FAMILY);
+
+        ConfigHelper.setInputRpcPort(job.getConfiguration(), CASSANDRA_PORT);
+        ConfigHelper.setInputInitialAddress(job.getConfiguration(), CASSANDRA_HOST);
+        ConfigHelper.setInputColumnFamily(job.getConfiguration(), KEYSPACE, COLUMN_FAMILY);
+        ConfigHelper.setInputPartitioner(job.getConfiguration(), "org.apache.cassandra.dht.RandomPartitioner");
         SlicePredicate predicate = new SlicePredicate().setColumn_names(Arrays.asList(ByteBufferUtil.bytes(
                 COLUMN_NAME)));
-        ConfigHelper.setInputSlicePredicate(conf, predicate);
+        ConfigHelper.setInputSlicePredicate(job.getConfiguration(), predicate);
         
         // output
         job.setOutputFormatClass(TextOutputFormat.class);
-        FileOutputFormat.setOutputPath(job, new Path(args[1]));
-        
+        FileOutputFormat.setOutputPath(job, new Path(args[0]));
+
+        job.setJarByClass(WordCountHDCAS.class);
         job.waitForCompletion(true);
     }
 }
