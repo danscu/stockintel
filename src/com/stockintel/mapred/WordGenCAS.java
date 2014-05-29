@@ -17,15 +17,15 @@ public class WordGenCAS {
     static final String COLUMN_NAME = "text_col";
 
     public static void main(String[] args) throws Exception {
-        Cluster cluster = Cluster.builder()
-                .addContactPoints(CASSANDRA_HOST)
-                .build();
-        Session session = cluster.connect(KEYSPACE);
-
-        if (args.length < 1) {
-            System.out.println("Usage: Wordgen <input file>");
+        if (args.length < 2) {
+            System.out.println("Usage: WordGenCAS <input file> <Casandra host>");
             System.exit(-1);
         }
+
+        Cluster cluster = Cluster.builder()
+                .addContactPoints(args[1])
+                .build();
+        Session session = cluster.connect(KEYSPACE);
 
         InputStream fis = new FileInputStream(args[0]);
         InputStreamReader in = new InputStreamReader(fis, "UTF-8");

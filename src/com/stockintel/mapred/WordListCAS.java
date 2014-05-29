@@ -12,8 +12,13 @@ public class WordListCAS {
     static final String COLUMN_NAME = "text_col";
 
     public static void main(String[] args) throws Exception {
+        if (args.length < 1) {
+            System.out.println("Usage: WordListCAS <Casandra host>");
+            System.exit(-1);
+        }
+        
         Cluster cluster = Cluster.builder()
-                .addContactPoints(CASSANDRA_HOST)
+                .addContactPoints(args[0])
                 .build();
         Session session = cluster.connect(KEYSPACE);
         

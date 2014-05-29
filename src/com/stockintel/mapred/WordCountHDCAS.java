@@ -73,8 +73,8 @@ public class WordCountHDCAS {
     }
 
     public static void main(String[] args) throws Exception {
-    	if (args.length < 1) {
-    		System.err.println("Usage: WordCountHDCAS <output path>");
+    	if (args.length < 2) {
+    		System.err.println("Usage: WordCountHDCAS <Cassandra host> <output path>");
     		System.exit(-1);
     	}
     	
@@ -92,7 +92,7 @@ public class WordCountHDCAS {
         job.setInputFormatClass(ColumnFamilyInputFormat.class);
 
         ConfigHelper.setInputRpcPort(conf, "9160");
-        ConfigHelper.setInputInitialAddress(conf, CASSANDRA_HOST);
+        ConfigHelper.setInputInitialAddress(conf, args[0]);
         ConfigHelper.setInputColumnFamily(conf, KEYSPACE, COLUMN_FAMILY);
         ConfigHelper.setInputInitialAddress(job.getConfiguration(), CASSANDRA_HOST);
         ConfigHelper.setInputColumnFamily(job.getConfiguration(), KEYSPACE, COLUMN_FAMILY);
@@ -107,7 +107,7 @@ public class WordCountHDCAS {
         
         // output
         job.setOutputFormatClass(TextOutputFormat.class);
-        FileOutputFormat.setOutputPath(job, new Path(args[0]));
+        FileOutputFormat.setOutputPath(job, new Path(args[1]));
 
         job.setJarByClass(WordCountHDCAS.class);
         job.waitForCompletion(true);
