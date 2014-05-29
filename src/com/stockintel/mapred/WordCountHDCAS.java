@@ -91,12 +91,6 @@ public class WordCountHDCAS {
         // input
         job.setInputFormatClass(ColumnFamilyInputFormat.class);
 
-        ConfigHelper.setInputRpcPort(conf, "9160");
-        ConfigHelper.setInputInitialAddress(conf, args[0]);
-        ConfigHelper.setInputColumnFamily(conf, KEYSPACE, COLUMN_FAMILY);
-        ConfigHelper.setInputInitialAddress(job.getConfiguration(), CASSANDRA_HOST);
-        ConfigHelper.setInputColumnFamily(job.getConfiguration(), KEYSPACE, COLUMN_FAMILY);
-        ConfigHelper.setInputPartitioner(job.getConfiguration(), "org.apache.cassandra.dht.RandomPartitioner");
         ConfigHelper.setInputRpcPort(job.getConfiguration(), CASSANDRA_PORT);
         ConfigHelper.setInputInitialAddress(job.getConfiguration(), CASSANDRA_HOST);
         ConfigHelper.setInputColumnFamily(job.getConfiguration(), KEYSPACE, COLUMN_FAMILY);

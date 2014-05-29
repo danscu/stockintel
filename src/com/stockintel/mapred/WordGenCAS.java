@@ -11,7 +11,7 @@ import com.datastax.driver.core.Row;
 import com.datastax.driver.core.Session;
 
 public class WordGenCAS {
-    static final String CASSANDRA_HOST = "localhost";
+    static final String CASSANDRA_HOST = "54.183.71.130";
     static final String KEYSPACE = "text_ks";
     static final String COLUMN_FAMILY = "text_table";
     static final String COLUMN_NAME = "text_col";

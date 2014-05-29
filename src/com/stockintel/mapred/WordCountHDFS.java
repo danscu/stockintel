@@ -58,6 +58,9 @@ public class WordCountHDFS {
 		FileInputFormat.addInputPath(job, new Path(args[0]));
 		FileOutputFormat.setOutputPath(job, new Path(args[1]));
 
+		// Set reduce numbers
+		job.setNumReduceTasks(2);
+		
 		job.setJarByClass(WordCountHDFS.class);
 		job.waitForCompletion(true);
 	}
