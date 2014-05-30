@@ -29,7 +29,7 @@ public class WordCountHDCAS {
     static final String KEYSPACE = "text_ks";
     static final String COLUMN_FAMILY = "text_table";
     static final String COLUMN_NAME = "text_col";
-
+    static int CASSANDRA_BATCH_SIZE = 2;
     static final String OUTPUT_PATH = "/output";
 
     private static final String CONF_COLUMN_NAME = "columnname";
@@ -107,6 +107,7 @@ public class WordCountHDCAS {
         SlicePredicate predicate = new SlicePredicate().setColumn_names(Arrays.asList(ByteBufferUtil.bytes(
                 COLUMN_NAME)));
         ConfigHelper.setInputSlicePredicate(job.getConfiguration(), predicate);
+        ConfigHelper.setRangeBatchSize(job.getConfiguration(), CASSANDRA_BATCH_SIZE);
         
         // output
         job.setOutputFormatClass(TextOutputFormat.class);
